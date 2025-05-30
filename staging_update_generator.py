@@ -2,6 +2,7 @@ import csv
 from docx import Document
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
+import datetime
 
 def add_hyperlink(paragraph, text, url):
     """
@@ -58,6 +59,11 @@ def generate_docx(date, blocking, major, minor, filename='update.docx'):
         for job, link in element["links"].items():
             add_hyperlink(p_blocking, job, link)
             p_blocking.add_run(', ')
+        # # Remove trailing comma and space
+        if p_blocking.runs:
+            last_run = p_blocking.runs[-1]
+            if last_run.text.endswith(', '):
+                last_run.text = last_run.text[:-2]
         p_blocking.add_run(f' - {element["description"]}')
 
     # Major issue
@@ -67,6 +73,11 @@ def generate_docx(date, blocking, major, minor, filename='update.docx'):
         for job, link in element["links"].items():
             add_hyperlink(p_major, job, link)
             p_major.add_run(', ')
+        # Remove trailing comma and space
+        if p_major.runs:
+            last_run = p_major.runs[-1]
+            if last_run.text.endswith(', '):
+                last_run.text = last_run.text[:-2]
         p_major.add_run(f' - {element["description"]}')
 
     # Minor issue
@@ -76,6 +87,11 @@ def generate_docx(date, blocking, major, minor, filename='update.docx'):
         for job, link in element["links"].items():
             add_hyperlink(p_minor, job, link)
             p_minor.add_run(', ')
+        # Remove trailing comma and space
+        if p_minor.runs:
+            last_run = p_minor.runs[-1]
+            if last_run.text.endswith(', '):
+                last_run.text = last_run.text[:-2]
         p_minor.add_run(f' - {element["description"]}')
     doc.save(filename)
     print(f"Document saved as {filename}")
@@ -133,15 +149,10 @@ with open("files/PCC staging TR status summary  (2025_PCC_Staging_TRs).csv") as 
             major.append(issue)
         else:
             major.append(issue)
+
     generate_docx(
-        date='2025-05-30',
+        date=datetime.date.today(),
         blocking=blocking,
         major=major,
         minor=minor
     )
-
-
-
-
-
-
