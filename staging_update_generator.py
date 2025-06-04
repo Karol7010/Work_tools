@@ -178,6 +178,8 @@ def csv_to_issues(row_no):
                 if not desc_found:
                     Issues.append({"description": d,"links": links})
         return Issues
+
+
 if __name__ == '__main__':
     download_csv_file()
 
