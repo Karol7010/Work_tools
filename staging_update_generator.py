@@ -88,7 +88,7 @@ def add_hyperlink(paragraph, text, url):
 
 def generate_docx(date, blocking, major, minor, filename='update.docx'):
     doc = Document()
-    doc.add_heading(f'Day {date} PCC Staging Update', level=1)
+    doc.add_heading(f'Day {date} PC-SM Staging Update', level=1)
 
     # Blocking issues
     p_title = doc.add_paragraph()
@@ -147,26 +147,42 @@ def csv_to_issues(row_no):
         next(reader)
         # For master
         for row in reader:
-            job = row[row_no].upper().strip()
+            # job = row[row_no].upper().strip()
+            job = row[row_no].upper()
             headline = row[1]
             comment = row[4]
             if job.strip():
                 d = ' '.join([headline, comment])
                 d = d.replace('\n', '')
                 links = {}
-                for single_job in job.split(' '):
+                for single_job in job.split('\n'):
                     if "OAM" in single_job:
-                        job_no = single_job.replace("OAM", "")
+                        job_no = single_job.strip().replace("OAM", "")
+                        links[single_job] = f"https://jenkins-blue-grey.karle005.rnd.gic.ericsson.se/job/staging-tests-jcat-fw--PCC-Staging-OAM-SM/{job_no}/"
+                    elif "OA" in single_job:
+                        job_no = single_job.strip().replace("OA", "")
                         links[single_job] = f"https://jenkins-blue-grey.karle005.rnd.gic.ericsson.se/job/staging-tests-jcat-fw--PCC-Staging-OAM-SM/{job_no}/"
                     elif "FT" in single_job:
-                        job_no = single_job.replace("FT", "")
+                        job_no = single_job.strip().replace("FT", "")
                         links[single_job] = f"https://jenkins-blue-grey.karle005.rnd.gic.ericsson.se/job/pcc-staging-deployment--Staging-footprint/{job_no}/"
                     elif "UPG" in single_job:
-                        job_no = single_job.replace("UPG", "")
+                        job_no = single_job.strip().replace("UPG", "")
                         links[single_job.strip()] = f"https://jenkins-blue-grey.karle005.rnd.gic.ericsson.se/job/staging-tests-jcat-fw--PCC-Staging-Upgrade-SM/{job_no}/"
                     elif "STAB" in single_job:
-                        job_no = single_job.replace("STAB", "")
+                        job_no = single_job.strip().replace("STAB", "")
                         links[single_job] = f"https://jenkins-blue-grey.karle005.rnd.gic.ericsson.se/job/staging-tests-jcat-fw--PCC-Staging-Stability-SM/{job_no}/"
+                    elif "STB" in single_job:
+                        job_no = single_job.strip().replace("STB", "")
+                        links[single_job] = f"https://jenkins-blue-grey.karle005.rnd.gic.ericsson.se/job/staging-tests-jcat-fw--PCC-Staging-Stability-SM/{job_no}/"
+                    elif "ST" in single_job:
+                        job_no = single_job.strip().replace("ST", "")
+                        links[single_job] = f"https://jenkins-blue-grey.karle005.rnd.gic.ericsson.se/job/staging-tests-jcat-fw--PCC-Staging-Stability-SM/{job_no}/"
+                    elif "RC" in single_job:
+                        job_no = single_job.strip().replace("RC", "")
+                        links[single_job] = f"https://jenkins-blue-grey.karle005.rnd.gic.ericsson.se/job/pc-staging-resources--Staging-small-telco-check/{job_no}/"
+                    elif "DR" in single_job:
+                        job_no = single_job.strip().replace("DR", "")
+                        links[single_job] = f"https://jenkins-deep-orange.karle005.rnd.gic.ericsson.se/job/infinity-pipeline-staging-helm-dr-check-pcc/{job_no}/"
                     else:
                         links[single_job] = "no_link"
                 desc_found = False
@@ -198,7 +214,7 @@ if __name__ == '__main__':
             elif len(issue['links']) < 5:
                 major.append(issue)
             else:
-                major.append(issue)
+                blocking.append(issue)
 
         generate_docx(
             date=datetime.date.today(),
